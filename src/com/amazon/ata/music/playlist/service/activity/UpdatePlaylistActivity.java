@@ -1,15 +1,25 @@
 package com.amazon.ata.music.playlist.service.activity;
 
+import com.amazon.ata.music.playlist.service.converters.ModelConverter;
+import com.amazon.ata.music.playlist.service.dynamodb.models.Playlist;
+import com.amazon.ata.music.playlist.service.exceptions.InvalidAttributeChangeException;
 import com.amazon.ata.music.playlist.service.exceptions.InvalidAttributeValueException;
+import com.amazon.ata.music.playlist.service.exceptions.PlaylistNotFoundException;
 import com.amazon.ata.music.playlist.service.models.PlaylistModel;
 import com.amazon.ata.music.playlist.service.models.requests.UpdatePlaylistRequest;
 import com.amazon.ata.music.playlist.service.models.results.UpdatePlaylistResult;
 import com.amazon.ata.music.playlist.service.dynamodb.PlaylistDao;
 
+import com.amazon.ata.music.playlist.service.util.MusicPlaylistServiceUtils;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Implementation of the UpdatePlaylistActivity for the MusicPlaylistService's UpdatePlaylist API.
@@ -51,9 +61,38 @@ public class UpdatePlaylistActivity implements RequestHandler<UpdatePlaylistRequ
     public UpdatePlaylistResult handleRequest(final UpdatePlaylistRequest updatePlaylistRequest, Context context) {
         log.info("Received UpdatePlaylistRequest {}", updatePlaylistRequest);
 
+        // validate playlist name from request
+        if (!MusicPlaylistServiceUtils.isValidString(updatePlaylistRequest.getName())) throw new InvalidAttributeValueException();
+
+        String playlistID = updatePlaylistRequest.getId();
+
+        // propagate the exception if getPlaylist return with no item data
+        try {
+            playlistDao.getPlaylist(playlistID);
+        } catch (PlaylistNotFoundException e) {
+            throw new PlaylistNotFoundException();
+        }
+
+        Playlist playlist = playlistDao.getPlaylist(playlistID);
+
+        // validate playlist customer ID matches request customer ID
+        if (!(playlist.getCustomerId().equals(updatePlaylistRequest.getCustomerId()))) throw new InvalidAttributeChangeException();
+
+        //update playlist (*For now, only supports updating the playlist name. Don't modify any of the other attributes.*)
+        playlist.setName(updatePlaylistRequest.getName());
+
+        //save playlist to DynamoDB
+        playlistDao.savePlaylist(playlist);
+
+        //create empty tags Set in case the playlist tag is null.
+        // null is preventing ModelConverter from compiling. If the tags set is empty, ModelConverter will set it back to null.
+
+        if (playlist.getTags() == null) playlist.setTags(new HashSet<>());
+
+        PlaylistModel playlistModel = new ModelConverter().toPlaylistModel(playlist);
 
         return UpdatePlaylistResult.builder()
-                .withPlaylist(new PlaylistModel())
+                .withPlaylist(playlistModel)
                 .build();
     }
 }

@@ -15,10 +15,12 @@ class PlaylistDao
 class AlbumTrackNotFoundException
 class InvalidAttributeValueException
 class PlaylistNotFoundException
+class InvalidAttributeChangeException
+class InvalidAttributeException
 
 
 class AlbumTrack {
-    -@DynamoDBHashKey asin : String
+    -@DynamoDBHashKey asin : StringMT2DesignIntrospectionTests
     -@DynamoDBRangeKey trackNumber : Integer
     -albumName : String
     -songTitle : String
@@ -72,4 +74,9 @@ class PlaylistDao {
 getPlaylist(String)
 getPlaylist() : Playlist
 }
+
+class InvalidAttributeException <|-- InvalidAttributeValueException
+class InvalidAttributeException <|-- InvalidAttributeChangeException
+class  RuntimeException <|-- InvalidAttributeException
+
 @enduml

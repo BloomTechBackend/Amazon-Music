@@ -28,7 +28,7 @@ public class PlaylistDao {
      * @param id the Playlist ID
      * @return the stored Playlist, or null if none was found.
      */
-    public Playlist getPlaylist(String id) {
+    public Playlist getPlaylist(String id) throws PlaylistNotFoundException {
         Playlist playlist = this.dynamoDbMapper.load(Playlist.class, id);
 
         if (playlist == null) {

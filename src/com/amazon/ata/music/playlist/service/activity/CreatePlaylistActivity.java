@@ -1,7 +1,9 @@
 package com.amazon.ata.music.playlist.service.activity;
 
 import com.amazon.ata.music.playlist.service.converters.ModelConverter;
+import com.amazon.ata.music.playlist.service.dynamodb.models.AlbumTrack;
 import com.amazon.ata.music.playlist.service.dynamodb.models.Playlist;
+import com.amazon.ata.music.playlist.service.exceptions.InvalidAttributeException;
 import com.amazon.ata.music.playlist.service.exceptions.InvalidAttributeValueException;
 import com.amazon.ata.music.playlist.service.lambda.CreatePlaylistActivityProvider;
 import com.amazon.ata.music.playlist.service.models.requests.CreatePlaylistRequest;
@@ -56,23 +58,33 @@ public class CreatePlaylistActivity implements RequestHandler<CreatePlaylistRequ
     public CreatePlaylistResult handleRequest(final CreatePlaylistRequest createPlaylistRequest, Context context) {
         log.info("Received CreatePlaylistRequest {}", createPlaylistRequest);
 
-        //check if new playlist name & customerID are valid
+//        check if new playlist name & customerID are valid
         if (!MusicPlaylistServiceUtils.isValidString(createPlaylistRequest.getName())
         || !MusicPlaylistServiceUtils.isValidString(createPlaylistRequest.getCustomerId())) {
             throw new InvalidAttributeValueException();
         }
 
+        // create a Set of tags to prevent duplications
         Set<String> tagsSet = new HashSet<>(createPlaylistRequest.getTags());
+        // if no tags are provided by CreatePlaylistRequest , Set is null.
+        if (tagsSet.isEmpty()) tagsSet = null;
 
-        PlaylistModel playlistModel = new PlaylistModel(PlaylistModel.builder()
-                .withCustomerId(createPlaylistRequest.getCustomerId())
-                .withId(MusicPlaylistServiceUtils.generatePlaylistId())
-                .withSongCount(0)
-                .withName(createPlaylistRequest.getName())
-                .withTags(new ArrayList<>(tagsSet)));
+        String playlistID = MusicPlaylistServiceUtils.generatePlaylistId();
+        List<AlbumTrack> listOfSongs = new ArrayList<>();
 
-//        ModelConverter
+        //create and populate playlist object
+        Playlist playlist = new Playlist();
+        playlist.setId(playlistID);
+        playlist.setCustomerId(createPlaylistRequest.getCustomerId());
+        playlist.setSongCount(0);
+        playlist.setName(createPlaylistRequest.getName());
+        playlist.setTags(tagsSet);
+        playlist.setSongList(listOfSongs);
 
+        //save the newly created playlist to DynamoDB
+        playlistDao.savePlaylist(playlist);
+
+        PlaylistModel playlistModel = new ModelConverter().toPlaylistModel(playlist);
 
         return CreatePlaylistResult.builder()
                 .withPlaylist(playlistModel)

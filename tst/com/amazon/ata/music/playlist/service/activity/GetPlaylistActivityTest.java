@@ -2,6 +2,7 @@ package com.amazon.ata.music.playlist.service.activity;
 
 import com.amazon.ata.music.playlist.service.dynamodb.PlaylistDao;
 import com.amazon.ata.music.playlist.service.dynamodb.models.Playlist;
+import com.amazon.ata.music.playlist.service.exceptions.PlaylistNotFoundException;
 import com.amazon.ata.music.playlist.service.models.requests.GetPlaylistRequest;
 import com.amazon.ata.music.playlist.service.models.results.GetPlaylistResult;
 import com.google.common.collect.Lists;
@@ -29,7 +30,7 @@ public class GetPlaylistActivityTest {
     }
 
     @Test
-    public void handleRequest_savedPlaylistFound_returnsPlaylistModelInResult() {
+    public void handleRequest_savedPlaylistFound_returnsPlaylistModelInResult() throws PlaylistNotFoundException {
         // GIVEN
         String expectedId = "expectedId";
         String expectedName = "expectedName";
