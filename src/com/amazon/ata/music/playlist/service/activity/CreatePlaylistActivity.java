@@ -65,9 +65,9 @@ public class CreatePlaylistActivity implements RequestHandler<CreatePlaylistRequ
         }
 
         // create a Set of tags to prevent duplications
-        Set<String> tagsSet = new HashSet<>(createPlaylistRequest.getTags());
+        Set<String> tagsSet = null;
         // if no tags are provided by CreatePlaylistRequest , Set is null.
-        if (tagsSet.isEmpty()) tagsSet = null;
+        if (createPlaylistRequest.getTags() != null) tagsSet = new HashSet<>(createPlaylistRequest.getTags());
 
         String playlistID = MusicPlaylistServiceUtils.generatePlaylistId();
         List<AlbumTrack> listOfSongs = new ArrayList<>();

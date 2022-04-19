@@ -14,8 +14,15 @@ public class ModelConverter {
      */
 
     public PlaylistModel toPlaylistModel(Playlist playlist) {
-        List<String> tags = new ArrayList<>(playlist.getTags());
-        if (tags.isEmpty()) tags = null;
+        List<String> tags = null;
+        if(playlist.getTags() != null) {
+            tags = new ArrayList<>(playlist.getTags());
+        }
+
+//        Integer songCount = 0;
+//        if (playlist.getSongCount() != 0) {
+//            songCount = playlist.getSongCount();
+//        }
 
         return PlaylistModel.builder()
             .withId(playlist.getId())
