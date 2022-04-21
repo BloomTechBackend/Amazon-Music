@@ -1,5 +1,6 @@
 package com.amazon.ata.music.playlist.service.activity;
 
+import com.amazon.ata.music.playlist.service.converters.ModelConverter;
 import com.amazon.ata.music.playlist.service.dynamodb.models.AlbumTrack;
 import com.amazon.ata.music.playlist.service.dynamodb.models.Playlist;
 import com.amazon.ata.music.playlist.service.exceptions.AlbumTrackNotFoundException;
@@ -81,17 +82,21 @@ public class AddSongToPlaylistActivity implements RequestHandler<AddSongToPlayli
         }
         AlbumTrack albumTrack = albumTrackDao.getAlbumTrack(asin, trackNumber);
 
-        playlist.getSongList().add(albumTrack);
+        List<AlbumTrack> albumTrackList = playlist.getSongList();
+        if(albumTrackList == null) albumTrackList = new LinkedList<>();
+        albumTrackList.add(albumTrack);
+
+        playlist.setSongList(albumTrackList);
         playlist.setSongCount(playlist.getSongCount() + 1);
         playlistDao.savePlaylist(playlist);
 
         List<SongModel> songModelList = new LinkedList<>();
         for (AlbumTrack song : playlist.getSongList()) {
-            SongModel songModel = new SongModel();
-            songModel.setTitle(albumTrack.getSongTitle());
-            songModel.setAlbum(albumTrack.getAlbumName());
-            songModel.setTrackNumber(albumTrack.getTrackNumber());
-            songModel.setAsin(albumTrack.getAsin());
+            SongModel songModel = new ModelConverter().toSongModel(song);
+            songModel.setTitle(song.getSongTitle());
+            songModel.setAlbum(song.getAlbumName());
+            songModel.setTrackNumber(song.getTrackNumber());
+            songModel.setAsin(song.getAsin());
             songModelList.add(songModel);
         }
 

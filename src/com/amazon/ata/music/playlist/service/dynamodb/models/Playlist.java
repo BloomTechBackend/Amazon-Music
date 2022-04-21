@@ -19,7 +19,7 @@ public class Playlist {
     private String name;
     private String customerId;
     private Integer songCount;
-    Set<String> tags;
+    private Set<String> tags;
     private List<AlbumTrack> songList;
 
     @DynamoDBHashKey(attributeName = "id")
