@@ -1,5 +1,6 @@
 package com.amazon.ata.music.playlist.service.models.requests;
 
+import javax.inject.Inject;
 import java.util.Objects;
 
 public class GetPlaylistRequest {

@@ -18,6 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Tags;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -37,6 +38,7 @@ public class CreatePlaylistActivity implements RequestHandler<CreatePlaylistRequ
      *
      * @param playlistDao PlaylistDao to access the playlists table.
      */
+    @Inject
     public CreatePlaylistActivity(PlaylistDao playlistDao) {
         this.playlistDao = playlistDao;
     }
