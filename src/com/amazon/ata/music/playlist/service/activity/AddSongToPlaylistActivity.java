@@ -84,7 +84,13 @@ public class AddSongToPlaylistActivity implements RequestHandler<AddSongToPlayli
 
         List<AlbumTrack> albumTrackList = playlist.getSongList();
         if(albumTrackList == null) albumTrackList = new LinkedList<>();
-        albumTrackList.add(albumTrack);
+        //MT5
+        albumTrackList = (LinkedList) albumTrackList;
+        if (addSongToPlaylistRequest.isQueueNext()) {
+            ((LinkedList<AlbumTrack>) albumTrackList).addFirst(albumTrack);
+        } else {
+            albumTrackList.add(albumTrack);
+        }
 
         playlist.setSongList(albumTrackList);
         playlist.setSongCount(playlist.getSongCount() + 1);
