@@ -5,11 +5,11 @@
 MT1: 
 - Create UML class diagrams based on the Design Document.
 - Update dynamodb.models classes (specifically, Playlist class) by completing any missing fields and annotations to get more complete HTTP responses from the GetPlaylist API.
-- Update PlaylistModel class, which represents our API Gateway's API definition and what clients interact with, to mirror the changes in Playlist class. We wouldn't want to directly expose our DynamoDB data model to our clients, especially with our implementation of storing the song list within the playlist itself. It also allows us to update our internal classes independently without risking our customers being affected! It is more of a service-level abstraction instead of class-level abstractions like interfaces and composition.
+- Update PlaylistModel class, which represents our API Gateway's API definition and what clients interact with, to mirror the changes in Playlist class. We wouldn't want to directly expose our DynamoDB data model to our clients, especially with our implementation of storing the song list within the playlist itself. It also allows us to update our internal classes independently without risking our customers being affected. It is more of a service-level abstraction instead of class-level abstractions like interfaces and composition.
 - Implement CreatePlaylistActivity's handleRequest method based on the design document's implementation.
 
 MT2:
--  Implement the exception hierarchy and the UpdatePlaylistActivity class based on the design document. Specifically, create a higher level, generic exception class to ecompass the existing InvalidAttributeValueException and a proposed InvalidAttributeChangeException. This can prove useful when we eventually centralize our validation logic in its own class 
+- Implement the exception hierarchy and the UpdatePlaylistActivity class based on the design document. Specifically, create a higher level, generic exception class to ecompass the existing InvalidAttributeValueException and a proposed InvalidAttributeChangeException. This can prove useful when we eventually centralize our validation logic in its own class 
 - Implement UpdatePlaylistActivity class based on our design document.
 
 MT3: 
