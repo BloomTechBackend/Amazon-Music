@@ -1,5 +1,23 @@
 ## Unit 3 Project Design Document
 
+
+### Explaining Commit Messages
+MT1: 
+- Create UML class diagrams based on the Design Document.
+- Update dynamodb.models classes (specifically, Playlist class) by completing any missing fields and annotations to get more complete HTTP responess from the GetPlaylist API.
+- Update PlaylistModel class, which represnts our API Gateway's API defintion and what clients interact with, to mirror the changes in Playlist class. We wouldn't want to directly expose our DynamoDB data model to our clients, especially with our implementation of storing the song list within the playlist itself. It also allows us to update our internal classes independently without risking our customers being affected! It is more of a service-level abstraction instead of class-level abstractions like interfaces and composition.
+- Implement CreatePlaylistActivity's handleRequest method based on the design document's implementation.
+
+MT2:
+- 
+
+MT3: 
+
+
+MT4:
+
+
+
 ### Background
 
 [Amazon Music Unlimited](https://www.amazon.com/b?ie=UTF8&node=15730321011)
